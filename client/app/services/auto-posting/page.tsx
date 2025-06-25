@@ -37,6 +37,11 @@ interface BusinessField {
   name: string
 }
 
+interface ChannelType {
+  id: string;
+  name: string;
+}
+
 export default function AutoPostingPage() {
   const { currentUser } = useSelector((state: RootState) => state.user)
   const searchParams = useSearchParams()
@@ -70,6 +75,9 @@ export default function AutoPostingPage() {
   const [selectedAccount, setSelectedAccount] = useState<string>("")
   const [selectedFanpage, setSelectedFanpage] = useState<string>("")
   const [excelFile, setExcelFile] = useState<File | null>(null)
+  const [channelTypes, setChannelTypes] = useState<ChannelType[]>([]);
+  const [loadingChannelTypes, setLoadingChannelTypes] = useState(true);
+  const [selectedChannel, setSelectedChannel] = useState<string>("");
 
   useEffect(() => {
     const fetchConnectedAccounts = async () => {
@@ -193,8 +201,33 @@ export default function AutoPostingPage() {
       }
     }
 
+    const fetchChannelTypes = async () => {
+      try {
+        setLoadingChannelTypes(true);
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8888';
+        const response = await axios.get(`${apiUrl}/channel/type`, {
+          withCredentials: true,
+        });
+        if (response.data && response.data.success) {
+          setChannelTypes(response.data.data);
+        } else {
+          throw new Error("Failed to fetch channel types");
+        }
+      } catch (error) {
+        console.error("Error fetching channel types:", error);
+        toast({
+          title: "Không thể tải loại kênh",
+          description: "Đã xảy ra lỗi khi tải danh sách các loại kênh.",
+          variant: "destructive",
+        });
+      } finally {
+        setLoadingChannelTypes(false);
+      }
+    };
+
     fetchConnectedAccounts()
     fetchBusinessFields()
+    fetchChannelTypes()
   }, [currentUser])
 
   useEffect(() => {
@@ -313,39 +346,79 @@ export default function AutoPostingPage() {
     setIsGeneratingExcel(true)
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8888"
 
+    const selectedBusinessField = businessFields.find((field) => field.id.toString() === businessType)
     const planData = {
-      user_id: currentUser?.id,
-      page_id: selectedFanpage,
-      posts_per_day: postsPerDay,
-      posting_times: postingTimes,
-      start_date: startDate ? format(startDate, "yyyy-MM-dd") : undefined,
-      end_date: endDate ? format(endDate, "yyyy-MM-dd") : undefined,
-      business_field_id: businessType,
-      keywords: keywords.split(",").map(k => k.trim()),
+      postsPerDay: postsPerDay,
+      postTimes: postingTimes.map(time => time.substring(0, 5)), // Ensure HH:mm format
+      numberOfDays: numberOfPostingDays,
+      startDate: startDate ? format(startDate, "yyyy-MM-dd") : undefined,
+      endDate: endDate ? format(endDate, "yyyy-MM-dd") : undefined,
+      businessFieldName: selectedBusinessField ? selectedBusinessField.name : customBusinessType
     }
     console.log("Plan data being sent:", planData)
 
     try {
-      const response = await axios.post(`${apiUrl}/auto-post-schedule/create-plan-excel`, planData, {
+      const response = await axios.post(`${apiUrl}/auto-post/create-plan-excel`, planData, {
         withCredentials: true,
+        responseType: 'blob', // Yêu cầu response dưới dạng file
       })
 
-      if (response.data && response.data.success) {
-        toast({
-          title: "Tạo lịch đăng thành công!",
-          description: "Lịch đăng bài của bạn đã được tạo và đang được xử lý.",
-        })
-        router.push("/manage-posts")
-      } else {
-        throw new Error(response.data?.message || "Không thể tạo lịch đăng.")
+      // Tạo URL tạm thời cho file nhận được
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+
+      // Lấy tên file từ header 'content-disposition'
+      const contentDisposition = response.headers['content-disposition'];
+      let fileName = 'plan.xlsx'; // Tên file mặc định
+      if (contentDisposition) {
+          const fileNameMatch = contentDisposition.match(/filename="?(.+)"?/);
+          if (fileNameMatch && fileNameMatch.length === 2)
+              fileName = fileNameMatch[1];
       }
-    } catch (error: any) {
-      const errorMessage = error.response?.data?.message || error.message || "Đã có lỗi xảy ra khi tạo lịch đăng."
+
+      link.setAttribute('download', fileName);
+      document.body.appendChild(link);
+      link.click();
+
+      // Dọn dẹp
+      if (link.parentNode) {
+        link.parentNode.removeChild(link);
+      }
+      window.URL.revokeObjectURL(url);
+
       toast({
-        title: "Tạo lịch đăng thất bại",
-        description: errorMessage,
-        variant: "destructive",
-      })
+        title: "Tải file thành công!",
+        description: "File Excel mẫu đã được tải về máy của bạn.",
+      });
+
+    } catch (error: any) {
+      // Nếu có lỗi, server vẫn trả về JSON trong Blob, cần đọc nó ra
+      if (error.response && error.response.data instanceof Blob) {
+        const errorText = await error.response.data.text();
+        try {
+          const errorJson = JSON.parse(errorText);
+          const errorMessage = errorJson.error || "Đã có lỗi xảy ra khi tạo file Excel.";
+           toast({
+            title: "Tạo file thất bại",
+            description: errorMessage,
+            variant: "destructive",
+          })
+        } catch (e) {
+           toast({
+            title: "Tạo file thất bại",
+            description: "Không thể phân tích lỗi từ server.",
+            variant: "destructive",
+          })
+        }
+      } else {
+        const errorMessage = error.response?.data?.message || error.message || "Đã có lỗi xảy ra khi tạo lịch đăng."
+        toast({
+          title: "Tạo lịch đăng thất bại",
+          description: errorMessage,
+          variant: "destructive",
+        })
+      }
     } finally {
       setIsGeneratingExcel(false)
     }
@@ -359,7 +432,7 @@ export default function AutoPostingPage() {
   const createScheduleFromExcel = async (formData: FormData) => {
     setIsUploading(true)
     try {
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/auto-post-schedule/create-by-excel`, formData, {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/auto-post/create-by-excel`, formData, {
         withCredentials: true,
         headers: {
           "Content-Type": "multipart/form-data",
@@ -395,13 +468,21 @@ export default function AutoPostingPage() {
       toast({ title: "Lỗi", description: "Vui lòng chọn Fanpage", variant: "destructive" })
       return
     }
+    if (!businessType) {
+      toast({ title: "Lỗi", description: "Vui lòng chọn lĩnh vực kinh doanh", variant: "destructive" })
+      return
+    }
 
     const formData = new FormData()
     formData.append("file", excelFile)
     if (currentUser?.id) {
-      formData.append("user_id", currentUser.id)
+      formData.append("userId", currentUser.id)
     }
-    formData.append("page_id", selectedFanpage)
+    formData.append("socialInteId", selectedFanpage)
+    // TODO: Get selected channelId from header/global state
+    formData.append("channelId", "1")
+    const selectedBusinessField = businessFields.find((field) => field.id.toString() === businessType)
+    formData.append("businessFieldName", selectedBusinessField ? selectedBusinessField.name : customBusinessType)
 
     await createScheduleFromExcel(formData)
   }
