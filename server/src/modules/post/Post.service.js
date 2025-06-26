@@ -41,6 +41,7 @@ class PostService {
             imageUrl: post.template.imageUrl, // ảnh đại diện chính
             images: post.template.images || [], // các ảnh phụ nếu có
             createdAt: post.template.createdAt,
+            postId: post.id,
             aiModel: post.template.aiModel,
             status: post.status,
             scheduledDate: post.scheduledDate,

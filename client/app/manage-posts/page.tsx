@@ -39,6 +39,7 @@ interface ConnectedAccount {
 
 interface Post {
   id: number;
+  postId: number;
   title: string;
   body: string;
   images?: {
@@ -590,7 +591,7 @@ export default function ManagePostsPage() {
               </TableHeader>
               <TableBody>
                 {posts.map((post, index) => (
-                  <TableRow key={post.id}>
+                  <TableRow key={post.postId}>
                     <TableCell>{(currentPage - 1) * limit + index + 1}</TableCell>
                     <TableCell>
                       {post.images && post.images.length > 0 ? (
@@ -631,7 +632,7 @@ export default function ManagePostsPage() {
                             <ImageIcon className="mr-2 h-4 w-4" />
                             <span>Quản lý ảnh</span>
                           </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => handleDeletePost(post.id)} className="text-red-600">
+                          <DropdownMenuItem onClick={() => handleDeletePost(post.postId)} className="text-red-600">
                             <Trash className="mr-2 h-4 w-4" />
                             <span>Xóa</span>
                           </DropdownMenuItem>
