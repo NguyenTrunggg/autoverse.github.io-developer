@@ -339,86 +339,76 @@ export default function AutoPostingPage() {
   }
 
   const handleGenerateExcel = async () => {
-    if (!selectedFanpage) {
-      toast({ title: "Lỗi", description: "Vui lòng chọn Fanpage để tạo lịch đăng", variant: "destructive" })
-      return
-    }
     setIsGeneratingExcel(true)
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8888"
-
     const selectedBusinessField = businessFields.find((field) => field.id.toString() === businessType)
+    const businessFieldName =
+      businessType === "other" ? customBusinessType : selectedBusinessField?.name || "Chưa chọn"
+
     const planData = {
-      postsPerDay: postsPerDay,
-      postTimes: postingTimes.map(time => time.substring(0, 5)), // Ensure HH:mm format
+      businessFieldName: businessFieldName,
+      startDate: startDate ? format(startDate, "yyyy-MM-dd") : "N/A",
+      endDate: endDate ? format(endDate, "yyyy-MM-dd") : "N/A",
       numberOfDays: numberOfPostingDays,
-      startDate: startDate ? format(startDate, "yyyy-MM-dd") : undefined,
-      endDate: endDate ? format(endDate, "yyyy-MM-dd") : undefined,
-      businessFieldName: selectedBusinessField ? selectedBusinessField.name : customBusinessType
+      postsPerDay: postsPerDay,
+      postTimes: postingTimes,
     }
-    console.log("Plan data being sent:", planData)
+
+    // Sử dụng apiUrl để đảm bảo kết nối đúng tới server
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8888'
+    console.log(`Đang kết nối đến API tạo Excel: ${apiUrl}/auto-post/create-plan-excel`)
+
+    const createExcelPlan = (data: typeof planData) => {
+      return axios.post(`${apiUrl}/auto-post/create-plan-excel`, data, {
+        responseType: "blob",
+        withCredentials: true,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+    }
 
     try {
-      const response = await axios.post(`${apiUrl}/auto-post/create-plan-excel`, planData, {
-        withCredentials: true,
-        responseType: 'blob', // Yêu cầu response dưới dạng file
-      })
+      const response = await createExcelPlan(planData)
 
-      // Tạo URL tạm thời cho file nhận được
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement('a');
-      link.href = url;
+      if (response?.data instanceof Blob) {
+        const blob = response.data
+        let fileName = "ke_hoach_dang_bai.xlsx"
+        const disposition = response.headers["content-disposition"]
 
-      // Lấy tên file từ header 'content-disposition'
-      const contentDisposition = response.headers['content-disposition'];
-      let fileName = 'plan.xlsx'; // Tên file mặc định
-      if (contentDisposition) {
-          const fileNameMatch = contentDisposition.match(/filename="?(.+)"?/);
-          if (fileNameMatch && fileNameMatch.length === 2)
-              fileName = fileNameMatch[1];
-      }
-
-      link.setAttribute('download', fileName);
-      document.body.appendChild(link);
-      link.click();
-
-      // Dọn dẹp
-      if (link.parentNode) {
-        link.parentNode.removeChild(link);
-      }
-      window.URL.revokeObjectURL(url);
-
-      toast({
-        title: "Tải file thành công!",
-        description: "File Excel mẫu đã được tải về máy của bạn.",
-      });
-
-    } catch (error: any) {
-      // Nếu có lỗi, server vẫn trả về JSON trong Blob, cần đọc nó ra
-      if (error.response && error.response.data instanceof Blob) {
-        const errorText = await error.response.data.text();
-        try {
-          const errorJson = JSON.parse(errorText);
-          const errorMessage = errorJson.error || "Đã có lỗi xảy ra khi tạo file Excel.";
-           toast({
-            title: "Tạo file thất bại",
-            description: errorMessage,
-            variant: "destructive",
-          })
-        } catch (e) {
-           toast({
-            title: "Tạo file thất bại",
-            description: "Không thể phân tích lỗi từ server.",
-            variant: "destructive",
-          })
+        if (disposition) {
+          const match = disposition.match(/filename="?([^"]+)"?/)
+          if (match && match[1]) {
+            fileName = match[1]
+          }
         }
-      } else {
-        const errorMessage = error.response?.data?.message || error.message || "Đã có lỗi xảy ra khi tạo lịch đăng."
+
+        const url = window.URL.createObjectURL(blob)
+        const link = document.createElement("a")
+        link.href = url
+        link.setAttribute("download", fileName)
+        document.body.appendChild(link)
+        link.click()
+        link.remove()
+        window.URL.revokeObjectURL(url)
+
         toast({
-          title: "Tạo lịch đăng thất bại",
-          description: errorMessage,
+          title: "Thành công",
+          description: "File Excel mẫu đã được tải về.",
+        })
+      } else {
+        toast({
+          title: "Lỗi",
+          description: "Không nhận được file đúng định dạng từ máy chủ.",
           variant: "destructive",
         })
       }
+    } catch (error) {
+      console.error("Lỗi khi tạo file Excel:", error)
+      toast({
+        title: "Lỗi",
+        description: "Không thể tạo file Excel mẫu. Vui lòng thử lại.",
+        variant: "destructive",
+      })
     } finally {
       setIsGeneratingExcel(false)
     }

@@ -8,8 +8,8 @@ export const createConTemplate = Joi.object({
 });
 
 export const updateConTemplate = Joi.object({
-    title: Joi.string().required(),
-    body: Joi.string().required(),
+    title: Joi.string().allow("").optional(),
+    body: Joi.string().allow("").optional(),
     userId: Joi.number().integer().optional(),
     aiModelId: Joi.number().integer().optional(),
 });

@@ -49,6 +49,47 @@ class ContentTemplateService {
     }
 
     // Cập nhật nội dung mẫu
+    // async updateConTemplate(data) {
+    //     const { conTemplateId, title, body, userId, aiModelId, imageUrls } = data;
+
+    //     const template = await repositories.conTemplate.findOne({
+    //         where: { id: conTemplateId },
+    //         relations: ["user", "aiModel", "images"],
+    //     });
+    //     if (!template) throw new CustomError("Template not found", 404);
+
+    //     if (userId) {
+    //         const user = await repositories.user.findOne({ where: { id: userId } });
+    //         if (!user) throw new CustomError("User not found", 404);
+    //         template.user = user;
+    //     }
+
+    //     if (aiModelId) {
+    //         const aiModel = await repositories.aiModel.findOne({ where: { id: aiModelId } });
+    //         if (!aiModel) throw new CustomError("AI Model not found", 404);
+    //         template.aiModel = aiModel;
+    //     }
+
+    //     template.title = title;
+    //     template.body = body;
+
+    //     // Thêm ảnh mới nếu có
+    //     if (imageUrls && imageUrls.length > 0) {
+    //         const newImages = imageUrls.map((url) =>
+    //             repositories.conTemplateImage.create({
+    //                 imageUrl: url,
+    //                 template: template,
+    //             })
+    //         );
+
+    //         // Gộp ảnh cũ + ảnh mới
+    //         template.images = [...(template.images || []), ...newImages];
+    //     }
+
+    //     return await repositories.conTemplate.save(template);
+    // }
+
+    // Cập nhật nội dung mẫu
     async updateConTemplate(data) {
         const { conTemplateId, title, body, userId, aiModelId, imageUrls } = data;
 
@@ -56,25 +97,35 @@ class ContentTemplateService {
             where: { id: conTemplateId },
             relations: ["user", "aiModel", "images"],
         });
+
         if (!template) throw new CustomError("Template not found", 404);
 
-        if (userId) {
+        if (typeof userId !== "undefined") {
             const user = await repositories.user.findOne({ where: { id: userId } });
             if (!user) throw new CustomError("User not found", 404);
             template.user = user;
         }
 
-        if (aiModelId) {
+        if (typeof aiModelId !== "undefined") {
             const aiModel = await repositories.aiModel.findOne({ where: { id: aiModelId } });
             if (!aiModel) throw new CustomError("AI Model not found", 404);
             template.aiModel = aiModel;
         }
 
-        template.title = title;
-        template.body = body;
+        // ✅ Chỉ cập nhật nếu khác undefined và khác ""
+        if (typeof title !== "undefined" && title.trim() !== "") {
+            template.title = title;
+        }
 
-        // Thêm ảnh mới nếu có
-        if (imageUrls && imageUrls.length > 0) {
+        if (typeof body !== "undefined" && body.trim() !== "") {
+            template.body = body;
+        }
+
+        if (Array.isArray(imageUrls) && imageUrls.length > 0) {
+            await repositories.conTemplateImage.delete({
+                template: { id: conTemplateId },
+            });
+
             const newImages = imageUrls.map((url) =>
                 repositories.conTemplateImage.create({
                     imageUrl: url,
@@ -82,8 +133,7 @@ class ContentTemplateService {
                 })
             );
 
-            // Gộp ảnh cũ + ảnh mới
-            template.images = [...(template.images || []), ...newImages];
+            template.images = newImages;
         }
 
         return await repositories.conTemplate.save(template);
