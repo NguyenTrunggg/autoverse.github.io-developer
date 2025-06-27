@@ -1,5 +1,5 @@
-import CustomError from "../../utils/CustomError";
-import repositories from "../../config/repositoryManager";
+import CustomError from "../../utils/CustomError.js";
+import repositories from "../../config/repositoryManager.js";
 
 class AssignedAIModelService {
     // Lấy tất cả thông tin giữa user và aimodel

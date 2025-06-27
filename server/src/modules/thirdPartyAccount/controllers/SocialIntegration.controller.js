@@ -1,5 +1,5 @@
-import CustomError from "../../../utils/CustomError";
-import socialInteService from "../services/SocialIntegration.service";
+import CustomError from "../../../utils/CustomError.js";
+import socialInteService from "../services/SocialIntegration.service.js";
 
 class SocialInteController {
     async getInforByThirdAccId(req, res, next) {

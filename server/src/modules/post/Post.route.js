@@ -1,8 +1,8 @@
 import express from "express";
-import postController from "./Post.controller";
+import postController from "./Post.controller.js";
 import validate from "../../middlewares/validateMiddleware.js";
 import { createPostSchema, updatePostSchema, updatePostStatusSchema } from "./Post.validator.js";
-import { checkUserJWT } from "../../middlewares/authMiddleware";
+import { checkUserJWT } from "../../middlewares/authMiddleware.js";
 
 const router = express.Router();
 

@@ -1,4 +1,4 @@
-import CustomError from "../../../utils/CustomError";
+import CustomError from "../../../utils/CustomError.js";
 
 class GoogleAuthController {
     async loginCallback(req, res, next) {

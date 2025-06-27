@@ -1,5 +1,5 @@
-import repositories from "../../config/repositoryManager";
-import CustomError from "../../utils/CustomError";
+import repositories from "../../config/repositoryManager.js";
+import CustomError from "../../utils/CustomError.js";
 
 class BusinessFieldService {
     // Lấy tất cả lĩnh vực kinh doanh

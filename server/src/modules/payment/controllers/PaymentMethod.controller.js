@@ -1,5 +1,5 @@
-import CustomError from "../../../utils/CustomError";
-import paymentMethodService from "../services/PaymentMethod.service";
+import CustomError from "../../../utils/CustomError.js";
+import paymentMethodService from "../services/PaymentMethod.service.js";
 
 class PaymentMethodController {
     // Lấy tất cả phương thức thanh toán

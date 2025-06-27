@@ -1,3 +1,3 @@
-import postCreationQueue from "./postCreation.queue";
+import postCreationQueue from "./postCreation.queue.js";
 
 export { postCreationQueue };

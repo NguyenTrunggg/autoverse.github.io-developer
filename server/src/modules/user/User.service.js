@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 
-import repositories from "../../config/repositoryManager";
-import CustomError from "../../utils/CustomError";
+import repositories from "../../config/repositoryManager.js";
+import CustomError from "../../utils/CustomError.js";
 
 class UserService {
     // Lấy danh sách tất cả người dùng, kèm role và status
@@ -48,7 +48,7 @@ class UserService {
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
-        
+
         // Convert status name to statusId
         const statusEntity = await repositories.status.findOne({ where: { name: status } });
         if (!statusEntity) {
@@ -71,9 +71,12 @@ class UserService {
 
     // Cập nhật thông tin người dùng
     async updateUser(userData) {
-        const existingUser = await repositories.user.findOne({ where: { id: userData.userId } ,relations: ["role", "status"]});
+        const existingUser = await repositories.user.findOne({
+            where: { id: userData.userId },
+            relations: ["role", "status"],
+        });
         console.log(">>> check user : ", existingUser);
-        
+
         if (!existingUser) {
             throw new CustomError("User not found.", 404);
         }
@@ -99,7 +102,9 @@ class UserService {
         }
 
         if (userData.status) {
-            const statusEntity = await repositories.status.findOne({ where: { name: userData.status } });
+            const statusEntity = await repositories.status.findOne({
+                where: { name: userData.status },
+            });
             if (!statusEntity) {
                 throw new CustomError(`Status "${userData.status}" not found.`, 400);
             }

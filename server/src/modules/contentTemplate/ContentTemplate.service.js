@@ -1,5 +1,5 @@
-import CustomError from "../../utils/CustomError";
-import repositories from "../../config/repositoryManager";
+import CustomError from "../../utils/CustomError.js";
+import repositories from "../../config/repositoryManager.js";
 
 class ContentTemplateService {
     // Lấy danh sách tất cả nội dung mẫu
@@ -48,54 +48,15 @@ class ContentTemplateService {
         return await repositories.conTemplate.save(newContentTemplate);
     }
 
-    // Cập nhật nội dung mẫu
-    // async updateConTemplate(data) {
-    //     const { conTemplateId, title, body, userId, aiModelId, imageUrls } = data;
-
-    //     const template = await repositories.conTemplate.findOne({
-    //         where: { id: conTemplateId },
-    //         relations: ["user", "aiModel", "images"],
-    //     });
-    //     if (!template) throw new CustomError("Template not found", 404);
-
-    //     if (userId) {
-    //         const user = await repositories.user.findOne({ where: { id: userId } });
-    //         if (!user) throw new CustomError("User not found", 404);
-    //         template.user = user;
-    //     }
-
-    //     if (aiModelId) {
-    //         const aiModel = await repositories.aiModel.findOne({ where: { id: aiModelId } });
-    //         if (!aiModel) throw new CustomError("AI Model not found", 404);
-    //         template.aiModel = aiModel;
-    //     }
-
-    //     template.title = title;
-    //     template.body = body;
-
-    //     // Thêm ảnh mới nếu có
-    //     if (imageUrls && imageUrls.length > 0) {
-    //         const newImages = imageUrls.map((url) =>
-    //             repositories.conTemplateImage.create({
-    //                 imageUrl: url,
-    //                 template: template,
-    //             })
-    //         );
-
-    //         // Gộp ảnh cũ + ảnh mới
-    //         template.images = [...(template.images || []), ...newImages];
-    //     }
-
-    //     return await repositories.conTemplate.save(template);
-    // }
-
-    // Cập nhật nội dung mẫu
     async updateConTemplate(data) {
-        const { conTemplateId, title, body, userId, aiModelId, imageUrls } = data;
+        const { conTemplateId, title, body, userId, aiModelId, imageBody, imageUrls } = data;
+
+        console.log("imageBody from request:", imageBody);
+        console.log("typeof imageBody:", typeof imageBody);
 
         const template = await repositories.conTemplate.findOne({
             where: { id: conTemplateId },
-            relations: ["user", "aiModel", "images"],
+            relations: ["user", "aiModel", "images"], // cần lấy cả images
         });
 
         if (!template) throw new CustomError("Template not found", 404);
@@ -112,7 +73,6 @@ class ContentTemplateService {
             template.aiModel = aiModel;
         }
 
-        // ✅ Chỉ cập nhật nếu khác undefined và khác ""
         if (typeof title !== "undefined" && title.trim() !== "") {
             template.title = title;
         }
@@ -121,19 +81,35 @@ class ContentTemplateService {
             template.body = body;
         }
 
-        if (Array.isArray(imageUrls) && imageUrls.length > 0) {
-            await repositories.conTemplateImage.delete({
-                template: { id: conTemplateId },
-            });
+        // --- Xử lý ảnh ---
+        const imagesToKeep = Array.isArray(imageBody) ? imageBody : [];
+        const imagesToKeepSet = new Set(imagesToKeep);
 
-            const newImages = imageUrls.map((url) =>
+        // 1. Lọc lại các ảnh muốn giữ
+        const currentImages = template.images || [];
+        const filteredImages = currentImages.filter((img) => imagesToKeepSet.has(img.imageUrl));
+
+        // 2. Xác định các ảnh cần xoá
+        const imagesToDelete = currentImages.filter((img) => !imagesToKeepSet.has(img.imageUrl));
+        const imageIdsToDelete = imagesToDelete.map((img) => img.id);
+
+        if (imageIdsToDelete.length > 0) {
+            await repositories.conTemplateImage.delete(imageIdsToDelete);
+        }
+
+        // 3. Thêm ảnh mới từ imageUrls
+        if (Array.isArray(imageUrls) && imageUrls.length > 0) {
+            const newImageEntities = imageUrls.map((url) =>
                 repositories.conTemplateImage.create({
                     imageUrl: url,
                     template: template,
                 })
             );
-
-            template.images = newImages;
+            const savedNewImages = await repositories.conTemplateImage.save(newImageEntities);
+            template.images = [...filteredImages, ...savedNewImages];
+        } else {
+            // Nếu không có ảnh mới, chỉ giữ ảnh cũ đã lọc
+            template.images = filteredImages;
         }
 
         return await repositories.conTemplate.save(template);

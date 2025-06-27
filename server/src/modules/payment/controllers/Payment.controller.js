@@ -1,4 +1,4 @@
-import paymentService from "../services/Payment.service";
+import paymentService from "../services/Payment.service.js";
 
 class PaymentController {
     // Lấy danh sách lịch sử thanh toán

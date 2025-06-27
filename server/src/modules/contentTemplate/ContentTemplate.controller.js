@@ -1,5 +1,5 @@
-import CustomError from "../../utils/CustomError";
-import contentTemplateService from "./ContentTemplate.service";
+import CustomError from "../../utils/CustomError.js";
+import contentTemplateService from "./ContentTemplate.service.js";
 
 class ContentTemplateController {
     // Lấy toàn bộ nội dung mẫu
@@ -48,12 +48,9 @@ class ContentTemplateController {
     async updateConTemplate(req, res, next) {
         try {
             const conTemplateId = req.params.id;
-            const { title, body, userId, aiModelId } = req.body;
+            const { title, body, userId, aiModelId, imageBody } = req.body;
 
-            const imageUrls =
-                req.files?.map((file) => {
-                    return `${req.protocol}://${req.get("host")}/uploads/images/${file.filename}`;
-                }) || [];
+            const imageUrls = req.files?.map((file) => file.filename) || [];
 
             const dataToUpdate = {
                 conTemplateId,
@@ -64,6 +61,20 @@ class ContentTemplateController {
             if (body) dataToUpdate.body = body;
             if (userId) dataToUpdate.userId = userId;
             if (aiModelId) dataToUpdate.aiModelId = aiModelId;
+
+            // ✅ Parse imageBody nếu là chuỗi JSON
+            if (imageBody) {
+                try {
+                    const parsed =
+                        typeof imageBody === "string" ? JSON.parse(imageBody) : imageBody;
+                    dataToUpdate.imageBody = Array.isArray(parsed) ? parsed : [];
+                } catch (e) {
+                    return res.status(400).json({
+                        success: false,
+                        error: '"imageBody" must be a valid JSON array (e.g. ["file1.png"])',
+                    });
+                }
+            }
 
             const updated = await contentTemplateService.updateConTemplate(dataToUpdate);
 

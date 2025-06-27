@@ -1,5 +1,5 @@
-import userPromotionService from "../services/UserPromotion.service";
-import CustomError from "../../../utils/CustomError";
+import userPromotionService from "../services/UserPromotion.service.js";
+import CustomError from "../../../utils/CustomError.js";
 
 class UserPromotionController {
     // Lấy Danh sách

@@ -1,4 +1,4 @@
-import autoPostService from "./AutoPost.service";
+import autoPostService from "./AutoPost.service.js";
 import path from "path";
 import fs from "fs";
 

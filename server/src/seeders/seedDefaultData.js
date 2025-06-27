@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 
-import repositories from "../config/repositoryManager";
+import repositories from "../config/repositoryManager.js";
 
 const seedDefaultData = async () => {
     // Seed role "admin"
@@ -64,7 +64,6 @@ const seedDefaultData = async () => {
     const defaultStatus = await repositories.status.findOne({
         where: { type: "USER", name: "active" },
     });
-
 
     // Seed admin user
     const adminEmail = "admin@gmail.com";

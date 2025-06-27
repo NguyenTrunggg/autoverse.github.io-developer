@@ -1,5 +1,5 @@
-import CustomError from "../../../utils/CustomError";
-import channelService from "../services/Channel.service";
+import CustomError from "../../../utils/CustomError.js";
+import channelService from "../services/Channel.service.js";
 
 class ChannelController {
     // Lấy tất cả kênh cụ thể

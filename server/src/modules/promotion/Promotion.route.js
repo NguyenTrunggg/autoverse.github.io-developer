@@ -1,6 +1,6 @@
 import express from "express";
 
-import validate from "../../middlewares/validateMiddleware";
+import validate from "../../middlewares/validateMiddleware.js";
 import {
     createUserPromotion,
     updateUserPromotion,

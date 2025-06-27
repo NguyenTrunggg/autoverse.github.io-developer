@@ -1,7 +1,7 @@
 import express from "express";
 
-import statusController from "./Status.controller";
-import { checkUserJWT, isAdmin } from "../../middlewares/authMiddleware";
+import statusController from "./Status.controller.js";
+import { checkUserJWT, isAdmin } from "../../middlewares/authMiddleware.js";
 
 const router = express.Router();
 

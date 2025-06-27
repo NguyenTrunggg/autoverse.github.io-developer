@@ -1,5 +1,5 @@
 import Bull from "bull";
-import { redisConfig } from "../config/redis";
+import { redisConfig } from "../config/redis.js";
 
 const postCreationQueue = new Bull("post-creation-queue", {
     redis: redisConfig,

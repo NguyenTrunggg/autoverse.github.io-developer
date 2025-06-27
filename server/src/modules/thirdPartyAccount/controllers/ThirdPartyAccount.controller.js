@@ -1,5 +1,5 @@
-import CustomError from "../../../utils/CustomError";
-import thirdPartyAccountService from "../services/ThirdPartyAccount.service";
+import CustomError from "../../../utils/CustomError.js";
+import thirdPartyAccountService from "../services/ThirdPartyAccount.service.js";
 
 class ThirdPartyAccountController {
     async getInforById(req, res, next) {

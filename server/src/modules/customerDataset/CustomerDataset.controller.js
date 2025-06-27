@@ -1,5 +1,5 @@
-import customerDatasetService from "./CustomerDataset.service";
-import CustomError from "../../utils/CustomError";
+import customerDatasetService from "./CustomerDataset.service.js";
+import CustomError from "../../utils/CustomError.js";
 
 class CustomerDatasetController {
     // Lấy toàn dữ liệu training AI cá nhân

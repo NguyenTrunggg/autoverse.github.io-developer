@@ -12,4 +12,11 @@ export const updateConTemplate = Joi.object({
     body: Joi.string().allow("").optional(),
     userId: Joi.number().integer().optional(),
     aiModelId: Joi.number().integer().optional(),
-});
+    // imageBody: Joi.array().items(Joi.string()).optional(),
+    // imageBody: Joi.alternatives()
+    //     .try(
+    //         Joi.array().items(Joi.string()),
+    //         Joi.string() // để accept JSON.stringify mảng trong form-data
+    //     )
+    //     .optional(),
+}).unknown();

@@ -1,5 +1,5 @@
 import { EntitySchema } from "typeorm";
-import SocialIntegration from "../models/SocialIntegration.model";
+import SocialIntegration from "../models/SocialIntegration.model.js";
 
 const SocialIntegrationSchema = new EntitySchema({
     name: "SocialIntegration",

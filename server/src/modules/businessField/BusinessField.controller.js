@@ -1,5 +1,5 @@
-import CustomError from "../../utils/CustomError";
-import businessFieldService from "./BusinessField.service";
+import CustomError from "../../utils/CustomError.js";
+import businessFieldService from "./BusinessField.service.js";
 
 class BusinessFieldController {
     // Lấy tất cả lĩnh vực kinh doanh

@@ -1,9 +1,9 @@
 import express from "express";
 
-import validate from "../../middlewares/validateMiddleware";
-import { createAssigned, updateAssigned } from "./AssignedAIModel.validator";
-import assignedAIModelController from "./AssignedAIModel.controller";
-import { checkUserJWT, isAdmin } from "../../middlewares/authMiddleware";
+import validate from "../../middlewares/validateMiddleware.js";
+import { createAssigned, updateAssigned } from "./AssignedAIModel.validator.js";
+import assignedAIModelController from "./AssignedAIModel.controller.js";
+import { checkUserJWT, isAdmin } from "../../middlewares/authMiddleware.js";
 
 const router = express.Router();
 

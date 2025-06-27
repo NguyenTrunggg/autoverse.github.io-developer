@@ -1,5 +1,5 @@
-import CustomError from "../../../utils/CustomError";
-import paymentGateWayService from "../services/PaymentGateWay.service";
+import CustomError from "../../../utils/CustomError.js";
+import paymentGateWayService from "../services/PaymentGateWay.service.js";
 
 class PaymentGateWayController {
     // Lấy dang sách cổng thanh toán

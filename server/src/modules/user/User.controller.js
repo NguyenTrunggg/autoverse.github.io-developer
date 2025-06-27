@@ -1,5 +1,5 @@
-import CustomError from "../../utils/CustomError";
-import userService from "./User.service";
+import CustomError from "../../utils/CustomError.js";
+import userService from "./User.service.js";
 
 class UserController {
     // Lấy toàn bộ người dùng
@@ -72,7 +72,7 @@ class UserController {
                     throw new CustomError("Invalid email format", 400);
                 }
             }
-            
+
             if (password && password.length < 6) {
                 throw new CustomError("Password must be at least 6 characters", 400);
             }

@@ -1,4 +1,4 @@
-import JWTService from "../utils/jwt";
+import JWTService from "../utils/jwt.js";
 
 const checkUserJWT = (req, res, next) => {
     // console.log("Cookies:", req.cookies);

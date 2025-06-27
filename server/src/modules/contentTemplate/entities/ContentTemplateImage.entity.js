@@ -1,5 +1,5 @@
 import { EntitySchema } from "typeorm";
-import ContentTemplateImage from "../models/ContentTemplateImage.model";
+import ContentTemplateImage from "../models/ContentTemplateImage.model.js";
 
 const ContentTemplateImageSchema = new EntitySchema({
     name: "ContentTemplateImage",

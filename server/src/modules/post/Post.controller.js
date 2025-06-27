@@ -1,5 +1,5 @@
-import postService from "./Post.service";
-import CustomError from "../../utils/CustomError";
+import postService from "./Post.service.js";
+import CustomError from "../../utils/CustomError.js";
 
 class PostController {
     async getAllPosts(req, res, next) {

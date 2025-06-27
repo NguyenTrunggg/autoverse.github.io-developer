@@ -1,5 +1,5 @@
-import CustomError from "../../utils/CustomError";
-import statusService from "./Status.service";
+import CustomError from "../../utils/CustomError.js";
+import statusService from "./Status.service.js";
 
 class StatusController {
     // Lấy tất cả trạng thái

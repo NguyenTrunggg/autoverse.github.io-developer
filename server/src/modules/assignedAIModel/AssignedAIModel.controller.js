@@ -1,5 +1,5 @@
-import assignedAIModelService from "./AssignedAIModel.service";
-import CustomError from "../../utils/CustomError";
+import assignedAIModelService from "./AssignedAIModel.service.js";
+import CustomError from "../../utils/CustomError.js";
 
 class AssignedAIModelController {
     // Lấy tất cả thông tin giữa user và aimodel

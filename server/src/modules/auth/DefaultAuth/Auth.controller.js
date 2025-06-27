@@ -1,6 +1,6 @@
-import CustomError from "../../../utils/CustomError";
-import authService from "./Auth.service";
-import JWTAction from "../../../utils/jwt";
+import CustomError from "../../../utils/CustomError.js";
+import authService from "./Auth.service.js";
+import JWTAction from "../../../utils/jwt.js";
 
 class AuthController {
     // Xử lý đăng nhập

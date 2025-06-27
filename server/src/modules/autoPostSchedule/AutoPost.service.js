@@ -1,11 +1,11 @@
-import { postCreationQueue } from "../../queues";
+import { postCreationQueue } from "../../queues/index.js";
 import {
     exportPlanToExcel,
     getInforFromExcel,
     removeVietnameseTones,
-} from "../../utils/excelUtils";
-import openai from "../../config/openai";
-import repositories from "../../config/repositoryManager";
+} from "../../utils/excelUtils.js";
+import openai from "../../config/openai.js";
+import repositories from "../../config/repositoryManager.js";
 
 class AutoPostService {
     async create(data) {

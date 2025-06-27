@@ -1,13 +1,13 @@
 import express from "express";
 import passport from "passport";
-require("../../config/oauth");
+require("../../config/oauth.js");
 
-import authController from "./DefaultAuth/Auth.controller";
-import faceAuthController from "./Facebook/controllers/FaceAuth.controller";
-import googleAuthController from "./Google/GoogleAuth.controller";
-import validate from "../../middlewares/validateMiddleware";
-import { handleLogin, handleRegister } from "./Auth.validator";
-import { checkUserJWT } from "../../middlewares/authMiddleware";
+import authController from "./DefaultAuth/Auth.controller.js";
+import faceAuthController from "./Facebook/controllers/FaceAuth.controller.js";
+import googleAuthController from "./Google/GoogleAuth.controller.js";
+import validate from "../../middlewares/validateMiddleware.js";
+import { handleLogin, handleRegister } from "./Auth.validator.js";
+import { checkUserJWT } from "../../middlewares/authMiddleware.js";
 
 const router = express.Router();
 

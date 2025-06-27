@@ -1,9 +1,9 @@
 import express from "express";
 
-import validate from "../../middlewares/validateMiddleware";
-import { createBusinessField, updateBusinessField } from "./BusinessField.validator";
-import businessFieldController from "./BusinessField.controller";
-import { checkUserJWT, isAdmin } from "../../middlewares/authMiddleware";
+import validate from "../../middlewares/validateMiddleware.js";
+import { createBusinessField, updateBusinessField } from "./BusinessField.validator.js";
+import businessFieldController from "./BusinessField.controller.js";
+import { checkUserJWT, isAdmin } from "../../middlewares/authMiddleware.js";
 
 const router = express.Router();
 

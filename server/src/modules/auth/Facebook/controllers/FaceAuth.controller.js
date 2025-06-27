@@ -1,9 +1,9 @@
-import faceAuthService from "../services/FaceAuth.service";
-import facePostService from "../services/FacePost.service";
-import conTemplateService from "../../../contentTemplate/ContentTemplate.service";
-import thirdPartyAccountService from "../../../thirdPartyAccount/services/ThirdPartyAccount.service";
-import socialIntegrationService from "../../../thirdPartyAccount/services/SocialIntegration.service";
-import CustomError from "../../../../utils/CustomError";
+import faceAuthService from "../services/FaceAuth.service.js";
+import facePostService from "../services/FacePost.service.js";
+import conTemplateService from "../../../contentTemplate/ContentTemplate.service.js";
+import thirdPartyAccountService from "../../../thirdPartyAccount/services/ThirdPartyAccount.service.js";
+import socialIntegrationService from "../../../thirdPartyAccount/services/SocialIntegration.service.js";
+import CustomError from "../../../../utils/CustomError.js";
 
 const FB_APP_ID = process.env.FB_APP_ID;
 const FB_LOGIN_REDIRECT_URI = process.env.FB_LOGIN_REDIRECT_URI;

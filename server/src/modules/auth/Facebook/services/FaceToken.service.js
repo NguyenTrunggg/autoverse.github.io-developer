@@ -1,5 +1,5 @@
 import axios from "axios";
-import CustomError from "../../../../utils/CustomError";
+import CustomError from "../../../../utils/CustomError.js";
 
 const FB_APP_ID = process.env.FB_APP_ID;
 const FB_APP_SECRET = process.env.FB_APP_SECRET;

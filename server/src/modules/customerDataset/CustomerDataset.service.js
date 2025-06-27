@@ -1,5 +1,5 @@
-import CustomError from "../../utils/CustomError";
-import repositories from "../../config/repositoryManager";
+import CustomError from "../../utils/CustomError.js";
+import repositories from "../../config/repositoryManager.js";
 
 class CustomerDatasetService {
     // Lấy tất cả dữ liệu training AI cá nhân

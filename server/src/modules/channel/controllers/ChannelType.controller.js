@@ -1,5 +1,5 @@
-import CustomError from "../../../utils/CustomError";
-import channelTypeService from "../services/ChannelType.service";
+import CustomError from "../../../utils/CustomError.js";
+import channelTypeService from "../services/ChannelType.service.js";
 
 class ChannelTypeController {
     // Lấy tất cả loại dịch vụ

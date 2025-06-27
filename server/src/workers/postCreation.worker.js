@@ -1,6 +1,6 @@
 import AppDataSource from "../config/database.js";
-import { postCreationQueue } from "../queues";
-import repositories from "../config/repositoryManager";
+import { postCreationQueue } from "../queues/index.js";
+import repositories from "../config/repositoryManager.js";
 import openai from "../config/openai.js";
 
 postCreationQueue.process(async (job) => {

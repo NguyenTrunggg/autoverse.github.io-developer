@@ -2,10 +2,10 @@ import express from "express";
 import multer from "multer";
 import path from "path";
 
-import autoPostController from "./AutoPost.controller";
+import autoPostController from "./AutoPost.controller.js";
 import validate from "../../middlewares/validateMiddleware.js";
 import { create, createScheduleByExcel, createPlanExcel } from "./AutoPost.validator.js";
-import { checkUserJWT } from "../../middlewares/authMiddleware";
+import { checkUserJWT } from "../../middlewares/authMiddleware.js";
 
 const router = express.Router();
 const upload = multer({

@@ -1,9 +1,9 @@
 import bcrypt from "bcrypt";
 import { IsNull } from "typeorm";
 
-import CustomError from "../../../utils/CustomError";
-import JWTAction from "../../../utils/jwt";
-import repositories from "../../../config/repositoryManager";
+import CustomError from "../../../utils/CustomError.js";
+import JWTAction from "../../../utils/jwt.js";
+import repositories from "../../../config/repositoryManager.js";
 
 class AuthService {
     // Xử lý logic đăng nhập

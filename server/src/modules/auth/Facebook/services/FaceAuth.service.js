@@ -2,9 +2,9 @@ import axios from "axios";
 import crypto from "crypto";
 import bcrypt from "bcrypt";
 
-import repositories from "../../../../config/repositoryManager";
-import CustomError from "../../../../utils/CustomError";
-import JWTAction from "../../../../utils/jwt";
+import repositories from "../../../../config/repositoryManager.js";
+import CustomError from "../../../../utils/CustomError.js";
+import JWTAction from "../../../../utils/jwt.js";
 
 const FB_APP_ID = process.env.FB_APP_ID;
 const FB_APP_SECRET = process.env.FB_APP_SECRET;

@@ -1,4 +1,4 @@
-import aiModelService from "./AIModel.service";
+import aiModelService from "./AIModel.service.js";
 
 class AIModelController {
     // Lấy toàn bộ mô hình AI

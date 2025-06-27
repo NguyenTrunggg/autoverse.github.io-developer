@@ -4,16 +4,16 @@ import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import path from "path";
 
-import configViewEngine from "./config/viewEngine";
-import configCors from "./config/cor";
-import appRoute from "./routes";
-import AppDataSource from "./config/database";
-import seedDefaultData from "./seeders/seedDefaultData";
-import { initWorkers } from "./workers";
+import configViewEngine from "./config/viewEngine.js";
+import configCors from "./config/cor.js";
+import appRoute from "./routes/index.js";
+import AppDataSource from "./config/database.js";
+import seedDefaultData from "./seeders/seedDefaultData.js";
+import { initWorkers } from "./workers/index.js";
 
 const app = express();
 dotenv.config();
-const PORT = process.env.PORT || 9999;
+const PORT = process.env.PORT || 8888;
 
 // Middleware để parse cookie
 app.use(cookieParser());
